@@ -1,3 +1,4 @@
+import isPrivateIp from 'private-ip';
 import { Request, Response } from 'express';
 import http, { IncomingMessage } from 'http';
 import https from 'https';
@@ -5,6 +6,18 @@ import { URL, URLSearchParams } from 'url';
 import { ErrorResponse } from './error-response.interface';
 
 const proxyRequest = (req: Request, res: Response, url: string) => {
+  const dest = new URL(url);
+
+  // Deny destinations that would be on the internal network
+  if (isPrivateIp(dest.hostname) || dest.hostname.toLowerCase() === 'localhost') {
+    res.statusCode = 400;
+    res.send({
+      code: 'EFORBIDDEN',
+      message: 'All destinations on internal networks are forbidden!',
+    } as ErrorResponse);
+    return;
+  }
+
   // Cache raw body as soon as possible
   const segments: Buffer[] = [];
   req.on('data', (seg: Buffer) => segments.push(seg));
@@ -29,8 +42,6 @@ const proxyRequest = (req: Request, res: Response, url: string) => {
     } else
       paramBuilder.append(qi, val);
   });
-
-  const dest = new URL(url);
 
   // Create proxy request config
   const proxyReqConf = {
