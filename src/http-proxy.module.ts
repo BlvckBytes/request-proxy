@@ -55,8 +55,6 @@ const proxyRequest = (req: Request, res: Response, url: string) => {
     },
   };
 
-  console.log(proxyReqConf);
-
   // This will handle proxy responses
   const proxyResHandler = (proxyRes: IncomingMessage) => {
     // Copy over status-code and response headers
