@@ -23,7 +23,7 @@ const proxyRequest = (req: Request, res: Response, url: string) => {
   req.on('data', (seg: Buffer) => segments.push(seg));
 
   // Strip "forbidden" headers, and create a object containing remaining entries
-  const strippedHeaders = ['connection', 'accept', 'content-length', 'accept-encoding', 'host'];
+  const strippedHeaders = ['connection', 'accept', 'content-length', 'accept-encoding', 'host', 'origin', 'referer'];
   const filteredHeaders = Object.keys(req.headers)
     .filter((key) => !strippedHeaders.includes(key))
     .reduce((acc, key) => {
@@ -54,6 +54,8 @@ const proxyRequest = (req: Request, res: Response, url: string) => {
       ...filteredHeaders,
     },
   };
+
+  console.log(proxyReqConf);
 
   // This will handle proxy responses
   const proxyResHandler = (proxyRes: IncomingMessage) => {

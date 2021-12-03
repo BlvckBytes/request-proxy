@@ -11,7 +11,7 @@
   "scripts": {
     "build": "npm run clean && tsc",
     "postbuild": "cp src/config.ini dist/",
-    "clean": "rm -r ./dist",
+    "clean": "rm -rf ./dist",
     "start": "node dist/app.js",
     "dev": "ts-node src/app.ts",
     "lint:check": "eslint --max-warnings 0 --ext ts \"src/**\"",
